@@ -1,0 +1,9 @@
+body, html{
+    height: 100%;
+    width: 100%;
+    overflow-x: none;
+}
+
+body{
+    background: url('../images/light-grey-terrazzo.png')
+}
