@@ -1,75 +1,50 @@
 
 var apiID = "cac71658"
 var apiKey = "4dc9de38439fea1667db9cf4d47b67f7"
-var waterlooURL = "http://transportapi.com/v3/uk/places.json?query=waterloo&type=train_station&app_id="+apiID+"&app_key="+apiKey+"&train_status=passenger"
-var birminghamURL = "http://transportapi.com/v3/uk/places.json?query=birmingham&type=train_station&app_id="+apiID+"&app_key="+apiKey+"&train_status=passenger"
+var queryURL = "https://transportapi.com/v3/uk/train/station/WAT/live.json?app_id="+apiID+"&app_key="+apiKey+"&darwin=true&train_status=passenger"
 
+function trains(response){
+
+  var dataArrayLength = response.departures.all.length
+
+  for(var i = 0; i < dataArrayLength; i++){
+
+    var originName = response.departures.all[i].origin_name
+    var platform = response.departures.all[i].platform
+
+    var name = originName +" - "+ platform
+    var namePElement = $("#name").append(name + "<br>")
+
+    var destination = response.departures.all[i].destination_name
+    var destinationPElement = $("#destination").append(destination + "<br>")
+
+    var next = response.departures.all[i].aimed_departure_time
+    var nextPElement = $("#next").append(next +  moment().format("a") + "<br>")
+  
+    next = next.toString()
+    next = next.split('')
+
+    var min = next[3]+next[4]
+    var currentMinute = moment().format("mm")
+
+    var away = Math.abs(min - currentMinute)
+    var awayPElement = $("#away").append(away + "<br>")
+
+    var frequency = Math.abs(moment(min).diff(moment(),"years"))
+    if (isNaN(frequency) === true){
+      frequency = 10
+    }
+    var frequencyPElement = $("#frequency").append(frequency + "<br>")
+    
+  }
+}
 
 $.ajax({
-    url: waterlooURL,
+    url: queryURL,
     method: "GET"
   }).then(function(response) {
 
-    var dataLength = response.member.length
-
-    for(var i = 0; i < dataLength; i++){
-
-
-        var name = response.member[i].name
-        var namePElement = $("#name").append(name + "<br>")
-
-        var destination = response.member[i].tiploc_code
-        var namePElement = $("#destination").append(destination + "<br>")
-
-        var Frequency = response.member[i].latitude
-        var newFrequency = Math.floor(Math.random() * Frequency) + 10
-        var frequencyPElement = $("#frequency").append(newFrequency + "<br>")
-
-        var hours = Math.floor(Math.random() * 24)
-        var seconds =  Math.floor(Math.random() * 60)
-        var minutes =  Math.floor(Math.random() * 60)
-
-        var nextPElement = $("#next").append(hours+":"+minutes+":"+seconds+ " pm" + "<br>")
-
-        var awayPElement = $("#away").append((newFrequency -5 ) + "<br>")
-
-    }
+    trains(response);    
 
   });
 
-  $.ajax({
-
-    url: birminghamURL,
-    method: "GET"
-  }).then(function(response) {
-
-    var dataLength = response.member.length
-
-
-
-    for(var i = 0; i < dataLength; i++){
-
-
-        var name = response.member[i].name
-        var namePElement = $("#name").append(name + "<br>")
-
-        var destination = response.member[i].tiploc_code
-        var namePElement = $("#destination").append(destination + "<br>")
-
-
-        var Frequency = response.member[i].latitude
-        var newFrequency = Math.floor(Math.random() * Frequency) + 10
-        var frequencyPElement = $("#frequency").append(newFrequency + "<br>")
-
-        var hours = Math.floor(Math.random() * 24)
-        var seconds =  Math.floor(Math.random() * 60)
-        var minutes =  Math.floor(Math.random() * 60)
-
-        var nextPElement = $("#next").append(hours+":"+minutes+":"+seconds+ " pm" + "<br>")
-
-        var awayPElement = $("#away").append((newFrequency -5 ) + "<br>")
-
-
-    }
-
-  });
