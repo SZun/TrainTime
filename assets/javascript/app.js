@@ -7,7 +7,7 @@ var tFrequency = ["67","9","129","7","28","999","44"]
 var apiID = 'cac71658';
 var apiKey = '4dc9de38439fea1667db9cf4d47b67f7';
 
-var queryURL = "https://transportapi.com/v3/uk/train/station/WAT/live.json?app_id="+apiID+"&app_key="+apiKey+"&darwin=false&train_status=passenger"
+var queryURL = "http://transportapi.com/v3/uk/train/station/WAT/live.json?app_id="+apiID+"&app_key="+apiKey+"&darwin=false&train_status=passenger"
 console.log(queryURL)
 
   var config = {
@@ -31,7 +31,13 @@ $(document).ready(function(){
 
   for (var i = 0; i < firstTime.length; i ++){
 
-      var JSONData = response.departures.all[i]
+
+    var JSONData = response.departures.all[i]
+
+    if (JSONData.platform === null){
+      JSONData.platform = Math.floor(Math.random() * 19) + 1
+    }
+      
       var name = JSONData.origin_name + " - " + JSONData.platform
       var where = JSONData.destination_name
       var time = JSONData.aimed_departure_time
@@ -73,7 +79,7 @@ $(document).ready(function(){
     var tMinutesTillTrain = frequencia - tRemainder;
     var nextTrain = moment().add(tMinutesTillTrain, "minutes");
 
-    if(frequencia === "0"){
+    if(frequencia === "0"){ 
       tMinutesTillTrain = frequencia
     }
 
