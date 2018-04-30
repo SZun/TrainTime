@@ -73,26 +73,54 @@ $(document).ready(function(){
     var frequencia = $("#fFrequency").val().trim()
     tFrequency.push(frequencia)
 
+    $("#name").append(nombre + "<br>")
+    $("#destination").append(donde + "<br>")
+    $("#frequency").append(frequencia + "<br>")
+
+    // First Time (pushed back 1 year to make sure it comes before current time)
+    var firstTimeConverted = moment(tiempo, "hh:mm a").subtract(1, "years");
+
+    // Current Time
+    var currentTime = moment();
+    // document.write("CURRENT TIME: " + moment(currentTime).format("hh:mm" + "<br>"));
+
+    // Difference between the times
+    var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
+
+    // Time apart (remainder)
+    var tRemainder = diffTime % frequencia;
+
+    // Minute Until Train
+    var tMinutesTillTrain = frequencia - tRemainder;
+
+    // Next Train
+    var nextTrain = moment().add(tMinutesTillTrain, "minutes");
+
+
+    $("#next").append(moment(nextTrain).format("hh:mm a") + "<br>")
+    $("#away").append(tMinutesTillTrain + "<br>")
+
 
     console.log(firstTime)
     console.log(trainNames)
 
-    database.ref().push({
-      TrainNames: trainNames,
-      TrainDestinations: destination,
-      TrainFrequencys: tFrequency,
-  })
-
-    trains();
+      database.ref().push({
+        
+        TrainNames: trainNames,
+        TrainFrequencys: tFrequency,
+        TrainDestinations: destination
+      
+    })
     
   })
 
 trains();
 
 database.ref().push({
+  
   TrainNames: trainNames,
-  TrainDestinations: destination,
   TrainFrequencys: tFrequency,
+  TrainDestinations: destination
 });
 
 })
