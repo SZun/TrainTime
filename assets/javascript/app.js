@@ -15,34 +15,19 @@ var tFrequency = ["67","9","129","7","28","999","44"]
   };
   firebase.initializeApp(config);
 
-
   var database = firebase.database();
 
 
 $(document).ready(function(){
 
   function trains(response){
-
   for (var i = 0; i < firstTime.length; i ++){
 
-
-      // First Time (pushed back 1 year to make sure it comes before current time)
       var firstTimeConverted = moment(firstTime[i], "hh:mm a").subtract(1, "years");
-  
-      // Current Time
       var currentTime = moment();
-      // document.write("CURRENT TIME: " + moment(currentTime).format("hh:mm" + "<br>"));
-  
-      // Difference between the times
       var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
-  
-      // Time apart (remainder)
       var tRemainder = diffTime % tFrequency[i];
-  
-      // Minute Until Train
       var tMinutesTillTrain = tFrequency[i] - tRemainder;
-  
-      // Next Train
       var nextTrain = moment().add(tMinutesTillTrain, "minutes");
 
 
@@ -51,25 +36,17 @@ $(document).ready(function(){
       $("#frequency").append(tFrequency[i] + "<br>")
       $("#next").append(moment(nextTrain).format("hh:mm a") + "<br>")
       $("#away").append(tMinutesTillTrain + "<br>")
-
-
     }
-
   }
-
 
   $("#submitBtn").on("click", function(){
     
     var nombre = $("#fName").val().trim()
-    console.log(nombre)
     trainNames.push(nombre)
-
     var donde = $("#fDestination").val().trim()
     destination.push(donde)
-
     var tiempo = $("#fTime").val().trim()
     firstTime.push(tiempo)  
-
     var frequencia = $("#fFrequency").val().trim()
     tFrequency.push(frequencia)
 
@@ -77,23 +54,11 @@ $(document).ready(function(){
     $("#destination").append(donde + "<br>")
     $("#frequency").append(frequencia + "<br>")
 
-    // First Time (pushed back 1 year to make sure it comes before current time)
     var firstTimeConverted = moment(tiempo, "hh:mm a").subtract(1, "years");
-
-    // Current Time
     var currentTime = moment();
-    // document.write("CURRENT TIME: " + moment(currentTime).format("hh:mm" + "<br>"));
-
-    // Difference between the times
     var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
-
-    // Time apart (remainder)
     var tRemainder = diffTime % frequencia;
-
-    // Minute Until Train
     var tMinutesTillTrain = frequencia - tRemainder;
-
-    // Next Train
     var nextTrain = moment().add(tMinutesTillTrain, "minutes");
 
 
@@ -101,26 +66,20 @@ $(document).ready(function(){
     $("#away").append(tMinutesTillTrain + "<br>")
 
 
-    console.log(firstTime)
-    console.log(trainNames)
+
 
       database.ref().push({
-        
         TrainNames: trainNames,
         TrainFrequencys: tFrequency,
         TrainDestinations: destination
-      
     })
-    
   })
 
 trains();
 
-database.ref().push({
-  
-  TrainNames: trainNames,
-  TrainFrequencys: tFrequency,
-  TrainDestinations: destination
-});
-
+  database.ref().push({
+    TrainNames: trainNames,
+    TrainFrequencys: tFrequency,
+    TrainDestinations: destination
+  });
 })
