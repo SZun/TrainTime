@@ -29,7 +29,7 @@ body{
 }
 
 .jumbotron{
-    background: url('https://media.giphy.com/media/115AWE57d10f4s/giphy.gif');
+    background: url('../images/train.gif');
     background-position: center;
     color: white;
     text-shadow: 1px 1px black;

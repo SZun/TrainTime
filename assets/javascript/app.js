@@ -4,7 +4,12 @@ var destination = ["New York","LA","Chicago","Seattle","Portland","Houston","Was
 var firstTime = ["07:20","04:35","06:26","03:30","09:44","02:10","07:55"]
 var tFrequency = ["67","9","129","7","28","999","44"]
 
-  // Initialize Firebase
+var apiID = 'cac71658';
+var apiKey = '4dc9de38439fea1667db9cf4d47b67f7';
+
+var queryURL = "https://transportapi.com/v3/uk/train/station/WAT/live.json?app_id="+apiID+"&app_key="+apiKey+"&darwin=false&train_status=passenger"
+console.log(queryURL)
+
   var config = {
     apiKey: "AIzaSyDHwN5wT1HeJv472UL7vkZzdfQrDt3Nb48",
     authDomain: "myfirstfirebase-dd973.firebaseapp.com",
@@ -17,27 +22,40 @@ var tFrequency = ["67","9","129","7","28","999","44"]
 
   var database = firebase.database();
 
-
 $(document).ready(function(){
 
-  function trains(response){
+  $.ajax({
+       url: queryURL,
+         method: "GET"
+       }).then(function(response) { 
+
   for (var i = 0; i < firstTime.length; i ++){
 
-      var firstTimeConverted = moment(firstTime[i], "hh:mm a").subtract(1, "years");
+    var JSONData = response.departures.all[i]
+      var name = JSONData.origin_name + " - " + JSONData.platform
+      var where = JSONData.destination_name
+      var time = JSONData.aimed_departure_time
+      var leFrequency = JSONData.best_departure_estimate_mins
+
+      // console.log(JSONData.best_departure_estimate_mins)
+
+      var firstTimeConverted = moment(time, "hh:mm a").subtract(1, "years");
       var currentTime = moment();
       var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
-      var tRemainder = diffTime % tFrequency[i];
-      var tMinutesTillTrain = tFrequency[i] - tRemainder;
+      var tRemainder = diffTime % leFrequency;
+      var tMinutesTillTrain = leFrequency - tRemainder;
       var nextTrain = moment().add(tMinutesTillTrain, "minutes");
 
+      if(leFrequency === 0){
+        tMinutesTillTrain = 0
+      }
 
-      $("#name").append(trainNames[i] + "<br>")
-      $("#destination").append(destination[i] + "<br>")
-      $("#frequency").append(tFrequency[i] + "<br>")
+      $("#name").append(name + "<br>")
+      $("#destination").append(where + "<br>")
+      $("#frequency").append(leFrequency + "<br>")
       $("#next").append(moment(nextTrain).format("hh:mm a") + "<br>")
       $("#away").append(tMinutesTillTrain + "<br>")
     }
-  }
 
   $("#submitBtn").on("click", function(){
     
@@ -61,12 +79,12 @@ $(document).ready(function(){
     var tMinutesTillTrain = frequencia - tRemainder;
     var nextTrain = moment().add(tMinutesTillTrain, "minutes");
 
+    if(frequencia === "0"){
+      tMinutesTillTrain = frequencia
+    }
 
     $("#next").append(moment(nextTrain).format("hh:mm a") + "<br>")
     $("#away").append(tMinutesTillTrain + "<br>")
-
-
-
 
       database.ref().push({
         TrainNames: trainNames,
@@ -74,8 +92,7 @@ $(document).ready(function(){
         TrainDestinations: destination
     })
   })
-
-trains();
+})
 
   database.ref().push({
     TrainNames: trainNames,
