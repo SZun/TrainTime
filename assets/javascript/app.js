@@ -31,13 +31,11 @@ $(document).ready(function(){
 
   for (var i = 0; i < firstTime.length; i ++){
 
-    var JSONData = response.departures.all[i]
+      var JSONData = response.departures.all[i]
       var name = JSONData.origin_name + " - " + JSONData.platform
       var where = JSONData.destination_name
       var time = JSONData.aimed_departure_time
-      var leFrequency = JSONData.best_departure_estimate_mins
-
-      // console.log(JSONData.best_departure_estimate_mins)
+      var leFrequency = Math.abs(JSONData.best_departure_estimate_mins) + 5
 
       var firstTimeConverted = moment(time, "hh:mm a").subtract(1, "years");
       var currentTime = moment();
@@ -45,10 +43,6 @@ $(document).ready(function(){
       var tRemainder = diffTime % leFrequency;
       var tMinutesTillTrain = leFrequency - tRemainder;
       var nextTrain = moment().add(tMinutesTillTrain, "minutes");
-
-      if(leFrequency === 0){
-        tMinutesTillTrain = 0
-      }
 
       $("#name").append(name + "<br>")
       $("#destination").append(where + "<br>")
@@ -88,7 +82,7 @@ $(document).ready(function(){
 
       database.ref().push({
         TrainNames: trainNames,
-        TrainFrequencys: tFrequency,
+        TrainFrequencies: tFrequency,
         TrainDestinations: destination
     })
   })
@@ -96,7 +90,7 @@ $(document).ready(function(){
 
   database.ref().push({
     TrainNames: trainNames,
-    TrainFrequencys: tFrequency,
+    TrainFrequencies: tFrequency,
     TrainDestinations: destination
   });
 })
