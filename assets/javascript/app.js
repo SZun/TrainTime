@@ -7,7 +7,7 @@ var tFrequency = ["67","9","129","7","28","999","44"]
 var apiID = 'cac71658';
 var apiKey = '4dc9de38439fea1667db9cf4d47b67f7';
 
-var queryURL = "http://transportapi.com/v3/uk/train/station/WAT/live.json?app_id="+apiID+"&app_key="+apiKey+"&darwin=false&train_status=passenger"
+var queryURL = "https://transportapi.com/v3/uk/train/station/WAT/live.json?app_id="+apiID+"&app_key="+apiKey+"&darwin=false&train_status=passenger"
 
   var config = {
     apiKey: "AIzaSyDHwN5wT1HeJv472UL7vkZzdfQrDt3Nb48",
