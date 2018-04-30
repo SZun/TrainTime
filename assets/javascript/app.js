@@ -1,50 +1,98 @@
 
-var apiID = "cac71658"
-var apiKey = "4dc9de38439fea1667db9cf4d47b67f7"
-var queryURL = "https://transportapi.com/v3/uk/train/station/WAT/live.json?app_id="+apiID+"&app_key="+apiKey+"&darwin=true&train_status=passenger"
+var trainNames = ["The Godfather","The Dark Knight", "The Shawshank Redemption","The Silence of the Lambs","The Big Lebowski","The Empire Strikes Back","The Shining"]
+var destination = ["New York","LA","Chicago","Seattle","Portland","Houston","Washington DC"]
+var firstTime = ["07:20","04:35","06:26","03:30","09:44","02:10","07:55"]
+var tFrequency = ["67","9","129","7","28","999","44"]
 
-function trains(response){
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyDHwN5wT1HeJv472UL7vkZzdfQrDt3Nb48",
+    authDomain: "myfirstfirebase-dd973.firebaseapp.com",
+    databaseURL: "https://myfirstfirebase-dd973.firebaseio.com",
+    projectId: "myfirstfirebase-dd973",
+    storageBucket: "myfirstfirebase-dd973.appspot.com",
+    messagingSenderId: "807640391676"
+  };
+  firebase.initializeApp(config);
 
-  var dataArrayLength = response.departures.all.length
 
-  for(var i = 0; i < dataArrayLength; i++){
+  var database = firebase.database();
 
-    var originName = response.departures.all[i].origin_name
-    var platform = response.departures.all[i].platform
 
-    var name = originName +" - "+ platform
-    var namePElement = $("#name").append(name + "<br>")
+$(document).ready(function(){
 
-    var destination = response.departures.all[i].destination_name
-    var destinationPElement = $("#destination").append(destination + "<br>")
+  function trains(response){
 
-    var next = response.departures.all[i].aimed_departure_time
-    var nextPElement = $("#next").append(next +  moment().format("a") + "<br>")
+  for (var i = 0; i < firstTime.length; i ++){
+
+
+      // First Time (pushed back 1 year to make sure it comes before current time)
+      var firstTimeConverted = moment(firstTime[i], "hh:mm a").subtract(1, "years");
   
-    next = next.toString()
-    next = next.split('')
+      // Current Time
+      var currentTime = moment();
+      // document.write("CURRENT TIME: " + moment(currentTime).format("hh:mm" + "<br>"));
+  
+      // Difference between the times
+      var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
+  
+      // Time apart (remainder)
+      var tRemainder = diffTime % tFrequency[i];
+  
+      // Minute Until Train
+      var tMinutesTillTrain = tFrequency[i] - tRemainder;
+  
+      // Next Train
+      var nextTrain = moment().add(tMinutesTillTrain, "minutes");
 
-    var min = next[3]+next[4]
-    var currentMinute = moment().format("mm")
 
-    var away = Math.abs(min - currentMinute)
-    var awayPElement = $("#away").append(away + "<br>")
+      $("#name").append(trainNames[i] + "<br>")
+      $("#destination").append(destination[i] + "<br>")
+      $("#frequency").append(tFrequency[i] + "<br>")
+      $("#next").append(moment(nextTrain).format("hh:mm a") + "<br>")
+      $("#away").append(tMinutesTillTrain + "<br>")
 
-    var frequency = Math.abs(moment(min).diff(moment(),"years"))
-    if (isNaN(frequency) === true){
-      frequency = 10
+
     }
-    var frequencyPElement = $("#frequency").append(frequency + "<br>")
-    
+
   }
-}
 
-$.ajax({
-    url: queryURL,
-    method: "GET"
-  }).then(function(response) {
 
-    trains(response);    
+  $("#submitBtn").on("click", function(){
+    
+    var nombre = $("#fName").val().trim()
+    console.log(nombre)
+    trainNames.push(nombre)
 
-  });
+    var donde = $("#fDestination").val().trim()
+    destination.push(donde)
 
+    var tiempo = $("#fTime").val().trim()
+    firstTime.push(tiempo)  
+
+    var frequencia = $("#fFrequency").val().trim()
+    tFrequency.push(frequencia)
+
+
+    console.log(firstTime)
+    console.log(trainNames)
+
+    database.ref().push({
+      TrainNames: trainNames,
+      TrainDestinations: destination,
+      TrainFrequencys: tFrequency,
+  })
+
+    trains();
+    
+  })
+
+trains();
+
+database.ref().push({
+  TrainNames: trainNames,
+  TrainDestinations: destination,
+  TrainFrequencys: tFrequency,
+});
+
+})

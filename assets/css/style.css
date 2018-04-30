@@ -5,5 +5,33 @@ body, html{
 }
 
 body{
-    background: url('../images/light-grey-terrazzo.png')
+    background: url('../images/dark-grey-terrazzo.png')
+}
+
+.card-body{
+    color: white !important;
+    background-color: black !important;
+}
+
+.bg-primary{
+    color: black !important;
+    background-color: white !important;
+}
+
+.btn-primary{
+    color: black !important;
+    background-color: white !important;
+}
+
+.btn-primary:hover, .btn-primary:active{
+    color: white !important;
+    background-color: black !important;
+}
+
+.jumbotron{
+    background: url('https://media.giphy.com/media/115AWE57d10f4s/giphy.gif');
+    background-position: center;
+    color: white;
+    text-shadow: 1px 1px black;
+    border: 1px solid white !important;
 }
