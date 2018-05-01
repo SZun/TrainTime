@@ -1,7 +1,7 @@
 
 var trainNames = []
 var destination = []
-var firstTime = ["07:20","04:35","06:26","03:30","09:44","02:10","07:55"]
+var firstTime = []
 var tFrequency = []
 
 var apiID = 'cac71658';
@@ -29,16 +29,18 @@ $(document).ready(function(){
          method: "GET"
        }).then(function(response) { 
 
-  for (var i = 0; i < firstTime.length; i ++){
+  let JSONData = response.departures.all
+
+  for (var i = 0; i < JSONData.length; i ++){
 
 
-    var JSONData = response.departures.all[i]
+    let JSONData = response.departures.all[i]
 
     if (JSONData.platform === null){
       JSONData.platform = Math.floor(Math.random() * 19) + 1
     }
       
-      var name = JSONData.origin_name + " " + JSONData.platform
+      var name = JSONData.origin_name + " - " + JSONData.platform
       var where = JSONData.destination_name
       var time = JSONData.aimed_departure_time
       var leFrequency = Math.abs(JSONData.best_departure_estimate_mins) + 5
@@ -56,20 +58,21 @@ $(document).ready(function(){
       $("#next").append(moment(nextTrain).format("hh:mm a") + "<br>")
       $("#away").append(tMinutesTillTrain + "<br>")
 
-      trainNames.push([name])
-      destination.push([where])
-      tFrequency.push([leFrequency])
+      trainNames.push(name)
+      destination.push(where)
+      tFrequency.push(leFrequency)
 
       console.log(trainNames);
       console.log(tFrequency);
       console.log(destination);
 
-      database.ref().push({
-        TrainNames: trainNames.join(' '),
-        TrainFrequencies: tFrequency.join(' '),
-        TrainDestinations: destination.join(' ')
-    })
     }
+
+    database.ref().push({
+      TrainNames: trainNames,
+      TrainFrequencies: tFrequency,
+      TrainDestinations: destination
+  })
 
   $("#submitBtn").on("click", function(){
     
@@ -108,9 +111,4 @@ $(document).ready(function(){
   })
 })
 
-  database.ref().push({
-    TrainNames: trainNames,
-    TrainFrequencies: tFrequency,
-    TrainDestinations: destination
-  });
 })

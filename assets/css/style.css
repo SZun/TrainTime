@@ -11,8 +11,8 @@ body{
 .top-card{
     color: #FFFFFF !important;
     text-shadow: 1px 1px #000000;
-    background: url('../images/smoke_train.gif');
-    background-position: center top;
+    background: url('../images/subway.gif');
+    background-position: center;
     -webkit-filter: grayscale(100%);
     filter: gray;
 }
