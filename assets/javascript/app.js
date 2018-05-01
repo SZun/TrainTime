@@ -1,13 +1,14 @@
 
-var trainNames = ["The Godfather","The Dark Knight", "The Shawshank Redemption","The Silence of the Lambs","The Big Lebowski","The Empire Strikes Back","The Shining"]
-var destination = ["New York","LA","Chicago","Seattle","Portland","Houston","Washington DC"]
+var trainNames = []
+var destination = []
 var firstTime = ["07:20","04:35","06:26","03:30","09:44","02:10","07:55"]
-var tFrequency = ["67","9","129","7","28","999","44"]
+var tFrequency = []
 
 var apiID = 'cac71658';
 var apiKey = '4dc9de38439fea1667db9cf4d47b67f7';
 
 var queryURL = "https://transportapi.com/v3/uk/train/station/WAT/live.json?app_id="+apiID+"&app_key="+apiKey+"&darwin=false&train_status=passenger"
+console.log(queryURL);
 
   var config = {
     apiKey: "AIzaSyDHwN5wT1HeJv472UL7vkZzdfQrDt3Nb48",
@@ -37,7 +38,7 @@ $(document).ready(function(){
       JSONData.platform = Math.floor(Math.random() * 19) + 1
     }
       
-      var name = JSONData.origin_name + " - " + JSONData.platform
+      var name = JSONData.origin_name + " " + JSONData.platform
       var where = JSONData.destination_name
       var time = JSONData.aimed_departure_time
       var leFrequency = Math.abs(JSONData.best_departure_estimate_mins) + 5
@@ -54,6 +55,20 @@ $(document).ready(function(){
       $("#frequency").append(leFrequency + "<br>")
       $("#next").append(moment(nextTrain).format("hh:mm a") + "<br>")
       $("#away").append(tMinutesTillTrain + "<br>")
+
+      trainNames.push([name])
+      destination.push([where])
+      tFrequency.push([leFrequency])
+
+      console.log(trainNames);
+      console.log(tFrequency);
+      console.log(destination);
+
+      database.ref().push({
+        TrainNames: trainNames.join(' '),
+        TrainFrequencies: tFrequency.join(' '),
+        TrainDestinations: destination.join(' ')
+    })
     }
 
   $("#submitBtn").on("click", function(){
